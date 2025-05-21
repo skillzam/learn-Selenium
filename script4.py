@@ -13,20 +13,14 @@ chrome_options.add_argument("--headless")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
                           options=chrome_options)
 
-# Open the Python website
-driver.get("https://www.python.org")
+# Open the Google website
+driver.get("https://www.google.com")
 
-# Print the page title
+search_box = driver.find_element(By.NAME, "q")
+search_box.send_keys("Selenium Python")
+search_box.send_keys(Keys.RETURN)
+
+time.sleep(3)
 print(driver.title)
 
-# Find the search bar using its name attribute
-search_bar = driver.find_element_by_name("q")
-search_bar.clear()
-search_bar.send_keys("getting started with python")
-search_bar.send_keys(Keys.RETURN)
-
-# Print the current URL
-print(driver.current_url)
-
-# Close the browser window
-driver.close()
+driver.quit()
