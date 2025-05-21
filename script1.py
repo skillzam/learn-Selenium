@@ -1,7 +1,11 @@
 from selenium import webdriver
+<<<<<<< HEAD
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+=======
+from selenium.webdriver.chrome.service import Service 
+>>>>>>> e32c61ee0753baeea81a1b9bea9fdf6ee90de4b3
 import time
 
 chrome_options = Options()
@@ -16,6 +20,7 @@ print("Successfully opened Skillzam in Chrome browser")
 
 time.sleep(30)
 
+<<<<<<< HEAD
 driver.quit()
 
 # from selenium import webdriver
@@ -53,3 +58,7 @@ driver.quit()
 #
 # if __name__ == "__main__":
 #     open_skillzam()
+=======
+# Close the browser window
+driver.close()
+>>>>>>> e32c61ee0753baeea81a1b9bea9fdf6ee90de4b3
