@@ -28,7 +28,7 @@ time.sleep(2)
 driver.switch_to.window(driver.window_handles[1])
 
 # Print title of new tab
-print("New Tab Title:", driver.title)
+print("New Tab Title:", driver.current_url)
 
 # Close new tab
 driver.close()
@@ -37,7 +37,7 @@ driver.close()
 driver.switch_to.window(driver.window_handles[0])
 
 # Confirm we're back on original tab
-print("Main Tab Title:", driver.title)
+print("Main Tab Title:", driver.current_url)
 
 # Close browser
 time.sleep(2)

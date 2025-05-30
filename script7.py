@@ -24,7 +24,7 @@ prompt_button.click()
 alert = driver.switch_to.alert
 print("Alert text:", alert.text)
 
-alert.send_keys("Yes, I agree!")
+alert.send_keys("NIKHIL")
 alert.accept()
 
 time.sleep(2)
