@@ -8,19 +8,18 @@ import time
 
 chrome_options = Options()
 chrome_options.add_argument("--start-maximized")
-chrome_options.add_argument("--headless")
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
                           options=chrome_options)
 
 # Open the Python website
-driver.get("https://www.python.org")
+driver.get("https://google.com")
 
 # Print the page title
 print(driver.title)
 
 # Find the search bar using its name attribute
-search_bar = driver.find_element_by_name("q")
+search_bar = driver.find_element(By.NAME, "q")
 search_bar.clear()
 search_bar.send_keys("getting started with python")
 search_bar.send_keys(Keys.RETURN)
