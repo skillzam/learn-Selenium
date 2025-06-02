@@ -21,7 +21,7 @@ print(driver.title)
 # Find the search bar using its name attribute
 search_bar = driver.find_element(By.NAME, "q")
 search_bar.clear()
-search_bar.send_keys("getting started with python")
+search_bar.send_keys("Getting started with Selenium Python")
 search_bar.send_keys(Keys.RETURN)
 
 # Print the current URL
