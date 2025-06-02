@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>openpyxl Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700\&family=Roboto+Mono:wght@400;700\&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc; /* slate-50 */
+        color: #334155; /* slate-700 */
+      }
+      .font-mono {
+        font-family: "Roboto Mono", monospace;
+      }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 300px;
+        max-height: 350px;
+      }
+      @media (min-width: 768px) {
+        .chart-container {
+          height: 350px;
+          max-height: 400px;
+        }
+      }
+      .code-block {
+        background-color: #1e293b; /* slate-800 */
+        color: #e2e8f0; /* slate-200 \*/
+        padding: 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-family: sans-serif;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+      code {
+        background-color: #e0e0e0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: monospace;
+        color: #334155;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <header class="bg-white py-12">
+      <div class="container mx-auto px-6 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-slate-900">
+          openpyxl : Unlock Excel with Python
+        </h1>
+        <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+          openpyxl is a Python library used for reading and writing Excel
+          (.xlsx) files . It allows you to interact with Excel spreadsheets
+          programmatically — without needing Microsoft Excel installed.
+        </p>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+      <section id="why" class="mb-16">
+        <h2 class="text-3xl font-bold text-center mb-8 text-slate-800">
+          Why Choose `openpyxl`?
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div
+            class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500"
+          >
+            <h3 class="font-bold text-xl mb-2 text-slate-800">
+              Native `.xlsx` Power
+            </h3>
+            <p class="text-slate-600">
+              Work directly with modern Excel 2010+ formats (`.xlsx`, `.xlsm`,
+              `.xltx`, `.xltm`). No legacy limitations, just full compatibility
+              with today's spreadsheet standards.
+            </p>
+          </div>
+          <div
+            class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500"
+          >
+            <h3 class="font-bold text-xl mb-2 text-slate-800">
+              Server-Side Freedom
+            </h3>
+            <p class="text-slate-600">
+              The library has no dependency on a local Microsoft Excel
+              installation, making it perfect for servers, Docker containers,
+              and automated cloud environments.
+            </p>
+          </div>
+          <div
+            class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500"
+          >
+            <h3 class="font-bold text-xl mb-2 text-slate-800">
+              Fine-Grained Control
+            </h3>
+            <p class="text-slate-600">
+              Go beyond simple data reads. Manipulate individual cells, apply
+              complex formatting, insert charts, and manage sheets—all
+              programmatically.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="getting-started"
+        class="mb-16 bg-white p-8 rounded-lg shadow-lg"
+      >
+        <h2 class="text-3xl font-bold text-center mb-8 text-slate-800">
+          Getting Started
+        </h2>
+        <div>
+          <div class="border-b border-slate-200">
+            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+              <button
+                id="tab-install"
+                class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg text-blue-600 border-blue-500"
+                aria-current="page"
+              >
+                Installation
+              </button>
+              <button
+                id="tab-concepts"
+                class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300"
+              >
+                Core Concepts
+              </button>
+            </nav>
+          </div>
+          <div id="panel-install" class="tab-panel py-6">
+            <p class="mb-4 text-slate-600">
+              Installation is handled easily with `pip`, Python's package
+              installer. For enhanced security against maliciously crafted XML,
+              `defusedxml` is recommended.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 class="font-semibold text-slate-700 mb-2">
+                  Standard Install
+                </h4>
+                <pre class="code-block font-mono">pip install openpyxl</pre>
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-700 mb-2">
+                  Secure Install (Recommended)
+                </h4>
+                <pre class="code-block font-mono">
+pip install openpyxl defusedxml</pre
+                >
+              </div>
+            </div>
+            <h4 class="font-semibold text-slate-700 mt-6 mb-2">Basic Import</h4>
+            <p class="mb-4 text-slate-600">
+              To use the library, import the `Workbook` and `load_workbook`
+              classes.
+            </p>
+            <pre class="code-block font-mono">
+from openpyxl import Workbook, load_workbook</pre
+            >
+          </div>
+          <div id="panel-concepts" class="tab-panel py-6 hidden">
+            <p class="mb-4 text-slate-600">
+              <strong
+                >Understanding Excel's structure is key. `openpyxl` maps these
+                concepts directly to Python objects.</strong
+              >
+            </p>
+            <ul class="space-y-4">
+              <li>
+                1.
+                <strong class="font-semibold text-slate-800">Workbook:</strong>
+                The entire Excel file
+                <code class="font-mono text-sm bg-slate-200 p-1 rounded"
+                  >.xlsx</code
+                >
+              </li>
+              <li>
+                2.
+                <strong class="font-semibold text-slate-800">Worksheet:</strong>
+                A single sheet or tab within a workbook.
+              </li>
+              <li>
+                3.
+                <strong class="font-semibold text-slate-800">Cell:</strong> An
+                individual data container, referenced by coordinates like
+                <code class="font-mono text-sm bg-slate-200 p-1 rounded"
+                  >"A1"</code
+                >.
+              </li>
+              <li>
+                4. <strong class="font-semibold text-slate-800">Row:</strong> A
+                horizontal line of cells, identified by numbers
+                <code class="font-mono text-sm bg-slate-200 p-1 rounded">
+                  (1, 2, 3...)</code
+                >.
+              </li>
+              <li>
+                5.
+                <strong class="font-semibold text-slate-800">Column:</strong> A
+                vertical line of cells, identified by letters
+                <code class="font-mono text-sm bg-slate-200 p-1 rounded"
+                  >(A, B, C...)</code
+                >.
+              </li>
+            </ul>
+            <br />
+            <hr />
+            <br />
+            <p class="mb-4 text-slate-600">
+              <strong>Referencing Cells</strong>
+            </p>
+            <ul class="space-y-4">
+              <li>
+                1.
+                <strong class="font-semibold text-slate-800"
+                  >Excel Style:</strong
+                ><code class="font-mono text-sm bg-slate-200 p-1 rounded"
+                  >sheet["A1"]</code
+                >
+              </li>
+              <li>
+                2.
+                <strong class="font-semibold text-slate-800"
+                  >Row-Column Indexing:</strong
+                ><code class="font-mono text-sm bg-slate-200 p-1 rounded"
+                  >sheet.cell(row=1, column=1)</code
+                >
+              </li>
+              <li class="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                <strong class="font-semibold text-blue-800"
+                  >Important Note on Indexing:</strong
+                >
+                Unlike standard Python lists,
+                <code class="font-mono text-sm bg-slate-200 p-1 rounded"
+                  >openpyxl</code
+                >
+                uses 1-based indexing for rows and columns (e.g.,
+                `sheet.cell(row=1, column=1)` refers to cell A1).
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16">
+        <section id="features">
+          <h2 class="text-3xl font-bold text-center mb-8 text-slate-800">
+            Features at a Glance
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h3 class="font-bold text-xl mb-3 text-slate-800">
+                Core Functionality
+              </h3>
+              <ul class="space-y-2 text-slate-600 list-disc list-inside">
+                <li>Load &amp; explore workbook</li>
+                <li>Iterate through data</li>
+                <li>Convert to PY data structure</li>
+                <li>Create workbook &amp; write</li>
+                <li>Modify existing Excel files</li>
+                <li>Append data dynamically</li>
+              </ul>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h3 class="font-bold text-xl mb-3 text-slate-800">
+                Advanced Capabilities
+              </h3>
+              <ul class="space-y-2 text-slate-600 list-disc list-inside">
+                <li>Fonts, borders &amp; alignment</li>
+                <li>Conditional formatting</li>
+                <li>Use Excel formulas</li>
+                <li>Insert charts &amp; images</li>
+                <li>Manage sheets</li>
+                <li>Freeze panes &amp; add filters</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section id="use-cases">
+          <h2 class="text-3xl font-bold text-center mb-8 text-slate-800">
+            Primary Use Cases
+          </h2>
+          <p class="text-center text-slate-600 mb-4 -mt-4">
+            From finance to marketing, `openpyxl` is the engine for a wide range
+            of automated tasks.
+          </p>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="chart-container">
+              <canvas id="useCasesChart"></canvas>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section id="Operations" class="mb-16">
+        <h2 class="text-3xl font-bold text-center mb-8 text-slate-800">
+          Common Operations with <code>openpyxl</code>
+        </h2>
+        <div class="flex justify-center">
+          <table class="max-w-3xl w-full">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Code Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Load Excel File</td>
+                <td><code>wb = load_workbook('file.xlsx')</code></td>
+              </tr>
+              <tr>
+                <td>Get Active Sheet</td>
+                <td><code>ws = wb.active</code></td>
+              </tr>
+              <tr>
+                <td>Access Cell Value</td>
+                <td><code>ws['A1'].value</code></td>
+              </tr>
+              <tr>
+                <td>Update Cell Value</td>
+                <td><code>ws['A1'] = 'New Value'</code></td>
+              </tr>
+              <tr>
+                <td>Save Changes</td>
+                <td><code>wb.save('file.xlsx')</code></td>
+              </tr>
+              <tr>
+                <td>Get All Rows</td>
+                <td><code>for row in ws.iter_rows(): ...</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="workflow" class="mb-16">
+        <h2 class="text-3xl font-bold text-center mb-8 text-slate-800">
+          A Typical Workflow
+        </h2>
+        <div
+          class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4"
+        >
+          <div class="bg-white p-4 rounded-lg shadow-md text-center">
+            <span class="text-2xl">📥</span>
+            <p class="font-semibold mt-2">Load/Create Workbook</p>
+          </div>
+          <div
+            class="text-2xl text-slate-400 font-sans transform md:rotate-0 rotate-90"
+          >
+            &rarr;
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow-md text-center">
+            <span class="text-2xl">📝</span>
+            <p class="font-semibold mt-2">Iterate & Modify Cells</p>
+          </div>
+          <div
+            class="text-2xl text-slate-400 font-sans transform md:rotate-0 rotate-90"
+          >
+            &rarr;
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow-md text-center">
+            <span class="text-2xl">🎨</span>
+            <p class="font-semibold mt-2">Apply Styles/Formulas</p>
+          </div>
+          <div
+            class="text-2xl text-slate-400 font-sans transform md:rotate-0 rotate-90"
+          >
+            &rarr;
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow-md text-center">
+            <span class="text-2xl">💾</span>
+            <p class="font-semibold mt-2">Save Workbook</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 text-center py-6">
+      <p>
+        This interactive guide is based on the `openpyxl` library documentation.
+      </p>
+      <p class="text-xs mt-1">&copy; 2025 Skillzam, All rights reserved.</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const tabs = document.querySelectorAll(".tab-button");
+        const panels = document.querySelectorAll(".tab-panel");
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            tabs.forEach((item) => {
+              item.classList.remove("text-blue-600", "border-blue-500");
+              item.classList.add("text-slate-500", "border-transparent");
+            });
+
+            tab.classList.add("text-blue-600", "border-blue-500");
+            tab.classList.remove("text-slate-500", "border-transparent");
+
+            const targetPanelId = tab.id.replace("tab-", "panel-");
+
+            panels.forEach((panel) => {
+              if (panel.id === targetPanelId) {
+                panel.classList.remove("hidden");
+              } else {
+                panel.classList.add("hidden");
+              }
+            });
+          });
+        });
+
+        const useCasesCtx = document.getElementById("useCasesChart");
+        if (useCasesCtx) {
+          const chartData = {
+            labels: [
+              "Data Automation",
+              "Reporting",
+              "Financial Modeling",
+              "Data Analysis",
+            ],
+            datasets: [
+              {
+                label: "Use Case Distribution",
+                data: [40, 30, 15, 15],
+                backgroundColor: [
+                  "#3b82f6", // blue-500
+                  "#22c55e", // green-500
+                  "#a855f7", // purple-500
+                  "#f97316", // orange-500
+                ],
+                borderColor: "#f8fafc",
+                borderWidth: 4,
+                hoverOffset: 4,
+              },
+            ],
+          };
+
+          new Chart(useCasesCtx, {
+            type: "doughnut",
+            data: chartData,
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    font: { family: "'Inter', sans-serif" },
+                  },
+                },
+                tooltip: {
+                  callbacks: {
+                    title: function (tooltipItems) {
+                      const item = tooltipItems[0];
+                      let label = item.chart.data.labels[item.dataIndex];
+                      return Array.isArray(label) ? label.join(" ") : label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

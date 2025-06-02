@@ -1,2 +1,3 @@
 .idea/
 .venv/
+openpyxl/__pycache__
