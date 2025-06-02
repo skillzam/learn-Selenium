@@ -8,7 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css"> <style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css"> 
+    <style>
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc; /* slate-50 */
@@ -88,6 +89,64 @@
         html.dark .cm-s-dracula.CodeMirror {
             background-color: #2d3748; /* Dark mode dracula theme background */
         }
+
+        /* Copy button styles */
+        .code-block-container {
+            position: relative;
+            margin-bottom: 1.5rem; /* Equivalent to mb-6 */
+        }
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            z-index: 10;
+        }
+        .code-block-container:hover .copy-button {
+            opacity: 1;
+        }
+        html.dark .copy-button {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Sidebar specific styles */
+        .sidebar-link.active {
+            background-color: #bfdbfe; /* blue-200 */
+            font-weight: 600;
+            color: #1d4ed8; /* blue-700 */
+        }
+        html.dark .sidebar-link.active {
+            background-color: #4a5568; /* darker gray for active in dark mode */
+            color: #90cdf4; /* light blue for active in dark mode */
+        }
+
+        /* Mobile sidebar specific styles */
+        .sidebar-mobile-hidden {
+            transform: translateX(-100%);
+        }
+        .sidebar-mobile-visible {
+            transform: translateX(0);
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 30;
+            display: none; /* Hidden by default */
+        }
+        .overlay.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -96,55 +155,92 @@
         <div class="container mx-auto px-6 text-center relative">
             <h1 class="text-4xl md:text-5xl font-bold">Selenium Python CheatSheet</h1>
             <p class="mt-4 text-lg">Automate Web Browsers with Ease</p>
+            
+            <button id="hamburger-menu" class="md:hidden absolute top-4 left-6 p-2 rounded-full bg-blue-600 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 z-50">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+
             <button id="theme-toggle" class="absolute top-4 right-6 p-2 rounded-full bg-blue-600 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
                 <span class="text-xl">💡</span>
             </button>
         </div>
     </header>
 
-    <main class="container mx-auto px-6 py-8">
+    <div id="sidebar-overlay" class="overlay"></div>
 
-        <section id="introduction" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">Introduction to Selenium</h2>
-            <p class="text-slate-700 leading-relaxed mb-4">
-                Selenium is a powerful tool for automating web browsers. It is a popular open-source framework used for automated testing of web applications across different browsers and platforms. You can write test scripts in various programming languages, including Python, JavaScript, Java, C#, and Ruby.
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="font-bold text-xl mb-2 text-slate-800">Selenium WebDriver</h3>
-                    <p class="text-slate-600">
-                        This is the most widely used component. It allows you to programmatically control a web browser (e.g., Chrome, Firefox, Edge) as if a human were interacting with it. It is commonly used for end-to-end testing.
-                    </p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="font-bold text-xl mb-2 text-slate-800">Selenium IDE</h3>
-                    <p class="text-slate-600">
-                        A browser extension for Chrome/Firefox, it provides a simple record-and-playback tool for creating test cases without coding. It's good for beginners.
-                    </p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="font-bold text-xl mb-2 text-slate-800">Selenium Grid</h3>
-                    <p class="text-slate-600">
-                        Selenium Grid allows you to run tests on multiple machines and browsers in parallel. This is useful for speeding up test execution and cross-browser testing.
-                    </p>
-                </div>
-            </div>
-            <h3 class="text-2xl font-bold mt-10 mb-4 text-slate-800">Common Use Cases</h3>
-            <ul class="list-disc list-inside space-y-2 text-slate-600">
-                <li>Automated testing of websites and web applications</li>
-                <li>Regression testing (to ensure old features still work)</li>
-                <li>Scraping web data (though Selenium is overkill for simple scraping)</li>
-                <li>Continuous Integration/Continuous Deployment (CI/CD) pipelines</li>
-            </ul>
-        </section>
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-100 p-6 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-40 md:relative md:translate-x-0 md:flex-shrink-0 md:h-screen overflow-y-auto">
+            <button id="sidebar-close" class="md:hidden absolute top-4 right-4 text-slate-800 hover:text-slate-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="mt-8 md:mt-0">
+                <h3 class="text-xl font-bold mb-4 text-slate-800">Sections</h3>
+                <ul class="space-y-2">
+                    <li><a href="#introduction" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">Introduction</a></li>
+                    <li><a href="#setup" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">1. Setup & Installation</a></li>
+                    <li><a href="#locating-elements" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">2. Locating Elements</a></li>
+                    <li><a href="#interacting-elements" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">3. Interacting with Elements</a></li>
+                    <li><a href="#dropdowns" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">4. Dropdowns</a></li>
+                    <li><a href="#alerts-popups" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">5. Alerts & Popups</a></li>
+                    <li><a href="#waits" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">6. Waits</a></li>
+                    <li><a href="#keyboard-mouse" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">7. Keyboard & Mouse</a></li>
+                    <li><a href="#frames-windows" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">8. Frames & Windows</a></li>
+                    <li><a href="#screenshots-cookies" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">9. Screenshots & Cookies</a></li>
+                    <li><a href="#closing-browser" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">10. Closing Browser</a></li>
+                    <li><a href="#navigation" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">11. Navigation</a></li>
+                    <li><a href="#final-notes" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">12. Final Notes</a></li>
+                    <li><a href="#examples" class="sidebar-link block py-2 px-4 rounded-md hover:bg-blue-100 dark:hover:bg-gray-700">13. Selenium Examples</a></li>
+                </ul>
+            </nav>
+        </aside>
 
-        <section id="setup" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">1. Setup & Installation</h2>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Install Selenium & WebDriver Manager</h3>
-            <pre class="code-block font-mono mb-6">pip install selenium webdriver-manager</pre>
+        <main class="flex-1 container mx-auto px-6 py-8">
 
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Import Required Modules</h3>
-            <pre class="code-block font-mono mb-6">
+            <section id="introduction" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">Introduction to Selenium</h2>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Selenium is a powerful tool for automating web browsers. It is a popular open-source framework used for automated testing of web applications across different browsers and platforms. You can write test scripts in various programming languages, including Python, JavaScript, Java, C#, and Ruby.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="font-bold text-xl mb-2 text-slate-800">Selenium WebDriver</h3>
+                        <p class="text-slate-600">
+                            This is the most widely used component. It allows you to programmatically control a web browser (e.g., Chrome, Firefox, Edge) as if a human were interacting with it. It is commonly used for end-to-end testing.
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="font-bold text-xl mb-2 text-slate-800">Selenium IDE</h3>
+                        <p class="text-slate-600">
+                            A browser extension for Chrome/Firefox, it provides a simple record-and-playback tool for creating test cases without coding. It's good for beginners.
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="font-bold text-xl mb-2 text-slate-800">Selenium Grid</h3>
+                        <p class="text-slate-600">
+                            Selenium Grid allows you to run tests on multiple machines and browsers in parallel. This is useful for speeding up test execution and cross-browser testing.
+                        </p>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold mt-10 mb-4 text-slate-800">Common Use Cases</h3>
+                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                    <li>Automated testing of websites and web applications</li>
+                    <li>Regression testing (to ensure old features still work)</li>
+                    <li>Scraping web data (though Selenium is overkill for simple scraping)</li>
+                    <li>Continuous Integration/Continuous Deployment (CI/CD) pipelines</li>
+                </ul>
+            </section>
+
+            <section id="setup" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">1. Setup & Installation</h2>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Install Selenium & WebDriver Manager</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">pip install selenium webdriver-manager</pre>
+                    <button class="copy-button">Copy</button>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Import Required Modules</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -155,119 +251,143 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 </pre>
+                    <button class="copy-button">Copy</button>
+                </div>
 
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Launch Chrome Browser</h3>
-            <h4 class="text-xl font-medium mb-2 text-slate-600">Basic setup</h4>
-            <pre class="code-block font-mono mb-6">
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Launch Chrome Browser</h3>
+                <h4 class="text-xl font-medium mb-2 text-slate-600">Basic setup</h4>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install())) 
 driver.get("https://example.com") 
 </pre>
-            <h4 class="text-xl font-medium mb-2 text-slate-600">With options (maximized, headless)</h4>
-            <p class="text-slate-700 mb-2">You can launch the browser with specific options, such as maximizing the window or running in headless mode (without a GUI).</p>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h4 class="text-xl font-medium mb-2 text-slate-600">With options (maximized, headless)</h4>
+                <p class="text-slate-700 mb-2">You can launch the browser with specific options, such as maximizing the window or running in headless mode (without a GUI).</p>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 chrome_options = Options() 
 chrome_options.add_argument("--start-maximized") 
 chrome_options.add_argument("--headless")   # Run without GUI
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="locating-elements" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">2. Locating Elements</h2>
-            <p class="text-slate-700 leading-relaxed mb-4">
-                To interact with elements on a web page, you first need to locate them. Selenium provides several methods for this.
-            </p>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border border-gray-200">
-                    <thead>
-                        <tr>
-                            <th class="py-2 px-4 border-b">Locator</th>
-                            <th class="py-2 px-4 border-b">Method</th>
-                            <th class="py-2 px-4 border-b">Example</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="py-2 px-4 border-b">ID</td>
-                            <td class="py-2 px-4 border-b">`find_element(By.ID, "id")`</td>
-                            <td class="py-2 px-4 border-b">`driver.find_element(By.ID, "username")`</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">Name</td>
-                            <td class="py-2 px-4 border-b">`find_element(By.NAME, "name")`</td>
-                            <td class="py-2 px-4 border-b">`driver.find_element(By.NAME, "email")`</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">Class Name</td>
-                            <td class="py-2 px-4 border-b">`find_element(By.CLASS_NAME, "class")`</td>
-                            <td class="py-2 px-4 border-b">`driver.find_element(By.CLASS_NAME, "btn")`</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">Tag Name</td>
-                            <td class="py-2 px-4 border-b">`find_element(By.TAG_NAME, "tag")`</td>
-                            <td class="py-2 px-4 border-b">`driver.find_element(By.TAG_NAME, "input")`</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">Link Text</td>
-                            <td class="py-2 px-4 border-b">`find_element(By.LINK_TEXT, "text")`</td>
-                            <td class="py-2 px-4 border-b">`driver.find_element(By.LINK_TEXT, "Sign Up")`</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">Partial Link Text</td>
-                            <td class="py-2 px-4 border-b">`find_element(By.PARTIAL_LINK_TEXT, "partial")`</td>
-                            <td class="py-2 px-4 border-b">`driver.find_element(By.PARTIAL_LINK_TEXT, "Sign")`</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">CSS Selector</td>
-                            <td class="py-2 px-4 border-b">`find_element(By.CSS_SELECTOR, "selector")`</td>
-                            <td class="py-2 px-4 border-b">`driver.find_element(By.CSS_SELECTOR, "#login .btn")`</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">XPath</td>
-                            <td class="py-2 px-4 border-b">`find_element(By.XPATH, "xpath")`</td>
-                            <td class="py-2 px-4 border-b">`driver.find_element(By.XPATH, "//input[@name='username']")`</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <section id="locating-elements" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">2. Locating Elements</h2>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    To interact with elements on a web page, you first need to locate them. Selenium provides several methods for this.
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b">Locator</th>
+                                <th class="py-2 px-4 border-b">Method</th>
+                                <th class="py-2 px-4 border-b">Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-2 px-4 border-b">ID</td>
+                                <td class="py-2 px-4 border-b">`find_element(By.ID, "id")`</td>
+                                <td class="py-2 px-4 border-b">`driver.find_element(By.ID, "username")`</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">Name</td>
+                                <td class="py-2 px-4 border-b">`find_element(By.NAME, "name")`</td>
+                                <td class="py-2 px-4 border-b">`driver.find_element(By.NAME, "email")`</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">Class Name</td>
+                                <td class="py-2 px-4 border-b">`find_element(By.CLASS_NAME, "class")`</td>
+                                <td class="py-2 px-4 border-b">`driver.find_element(By.CLASS_NAME, "btn")`</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">Tag Name</td>
+                                <td class="py-2 px-4 border-b">`find_element(By.TAG_NAME, "tag")`</td>
+                                <td class="py-2 px-4 border-b">`driver.find_element(By.TAG_NAME, "input")`</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">Link Text</td>
+                                <td class="py-2 px-4 border-b">`find_element(By.LINK_TEXT, "text")`</td>
+                                <td class="py-2 px-4 border-b">`driver.find_element(By.LINK_TEXT, "Sign Up")`</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">Partial Link Text</td>
+                                <td class="py-2 px-4 border-b">`find_element(By.PARTIAL_LINK_TEXT, "partial")`</td>
+                                <td class="py-2 px-4 border-b">`driver.find_element(By.PARTIAL_LINK_TEXT, "Sign")`</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">CSS Selector</td>
+                                <td class="py-2 px-4 border-b">`find_element(By.CSS_SELECTOR, "selector")`</td>
+                                <td class="py-2 px-4 border-b">`driver.find_element(By.CSS_SELECTOR, "#login .btn")`</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">XPath</td>
+                                <td class="py-2 px-4 border-b">`find_element(By.XPATH, "xpath")`</td>
+                                <td class="py-2 px-4 border-b">`driver.find_element(By.XPATH, "//input[@name='username']")`</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        <section id="interacting-elements" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">3. Interacting with Elements</h2>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Send Text to Input Field</h3>
-            <pre class="code-block font-mono mb-6">
+            <section id="interacting-elements" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">3. Interacting with Elements</h2>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Send Text to Input Field</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 element = driver.find_element(By.ID, "username") 
 element.send_keys("testuser")
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Clear Input Field</h3>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Clear Input Field</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 element.clear()
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Click a Button/Link</h3>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Click a Button/Link</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver.find_element(By.ID, "submit-btn").click()
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Check if Element is Displayed/Enabled/Selected</h3>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Check if Element is Displayed/Enabled/Selected</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 element = driver.find_element(By.ID, "checkbox") 
 print(element.is_displayed())   # True/False
 print(element.is_enabled())     # True/False
 print(element.is_selected())    # True/False (for checkboxes/radio buttons)
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Get Element Text & Attributes</h3>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Get Element Text & Attributes</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 element = driver.find_element(By.ID, "header") 
 print(element.text)   # Get visible text
 print(element.get_attribute("href"))   # Get attribute value
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="dropdowns" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">4. Dropdowns (Select Class)</h2>
-            <p class="text-slate-700 leading-relaxed mb-4">
-                For interacting with dropdowns (HTML `&lt;select&gt;` elements), Selenium provides the `Select` class.
-            </p>
-            <pre class="code-block font-mono mb-6">
+            <section id="dropdowns" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">4. Dropdowns (Select Class)</h2>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    For interacting with dropdowns (HTML &lt;select&gt; elements), Selenium provides the `Select` class.
+                </p>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 from selenium.webdriver.support.select import Select
 
 dropdown = Select(driver.find_element(By.ID, "country")) 
@@ -275,43 +395,57 @@ dropdown.select_by_visible_text("USA")   # Select by text
 dropdown.select_by_value("us")          # Select by value
 dropdown.select_by_index(1)             # Select by index
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="alerts-popups" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">5. Handling Alerts & Popups</h2>
-            <p class="text-slate-700 leading-relaxed mb-4">
-                Selenium allows you to interact with JavaScript alert, confirm, and prompt dialogs.
-            </p>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Accept alert</h3>
-            <pre class="code-block font-mono mb-6">
+            <section id="alerts-popups" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">5. Handling Alerts & Popups</h2>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Selenium allows you to interact with JavaScript alert, confirm, and prompt dialogs.
+                </p>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Accept alert</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 alert = driver.switch_to.alert
 print(alert.text)   # Get alert text 
 alert.accept()      # Click OK 
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Dismiss alert</h3>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Dismiss alert</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 alert.dismiss() 
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Send text to prompt</h3>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Send text to prompt</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 alert.send_keys("Yes") 
 alert.accept()
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="waits" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">6. Waits (Implicit & Explicit)</h2>
-            <p class="text-slate-700 leading-relaxed mb-4">
-                Web pages often load dynamically, so it's crucial to implement waits to ensure elements are present and interactive before attempting to interact with them. Explicit waits are preferred over `time.sleep()` for better efficiency.
-            </p>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Implicit Wait (Global Wait for All Elements)</h3>
-            <p class="text-slate-700 mb-2">This sets a maximum time the driver will wait for an element to be found before throwing a `NoSuchElementException`.</p>
-            <pre class="code-block font-mono mb-6">
+            <section id="waits" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">6. Waits (Implicit & Explicit)</h2>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Web pages often load dynamically, so it's crucial to implement waits to ensure elements are present and interactive before attempting to interact with them. Explicit waits are preferred over `time.sleep()` for better efficiency.
+                </p>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Implicit Wait (Global Wait for All Elements)</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver.implicitly_wait(10)   # Wait up to 10 sec for elements
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Explicit Wait (Wait for a Specific Condition)</h3>
-            <p class="text-slate-700 mb-2">Explicit waits allow you to wait for a specific condition to be met before proceeding.</p>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Explicit Wait (Wait for a Specific Condition)</h3>
+                <p class="text-slate-700 mb-2">Explicit waits allow you to wait for a specific condition to be met before proceeding.</p>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -319,27 +453,32 @@ element = WebDriverWait(driver, 10).until(
     EC.presence_of_element_located((By.ID, "dynamic-element")) 
 )
 </pre>
-            <h4 class="text-xl font-medium mb-2 text-slate-600">Common Expected Conditions:</h4>
-            <ul class="list-disc list-inside space-y-2 text-slate-600">
-                <li>`EC.presence_of_element_located` (Element exists in DOM)</li>
-                <li>`EC.visibility_of_element_located` (Element is visible)</li>
-                <li>`EC.element_to_be_clickable` (Element is clickable)</li>
-                <li>`EC.title_contains("Welcome")` (Page title contains text)</li>
-            </ul>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h4 class="text-xl font-medium mb-2 text-slate-600">Common Expected Conditions:</h4>
+                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                    <li>`EC.presence_of_element_located` (Element exists in DOM)</li>
+                    <li>`EC.visibility_of_element_located` (Element is visible)</li>
+                    <li>`EC.element_to_be_clickable` (Element is clickable)</li>
+                    <li>`EC.title_contains("Welcome")` (Page title contains text)</li>
+                </ul>
+            </section>
 
-        <section id="keyboard-mouse" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">7. Keyboard & Mouse Actions</h2>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Keyboard Actions (Send Special Keys)</h3>
-            <p class="text-slate-700 mb-2">You can simulate special keyboard keys like ENTER, TAB, etc.</p>
-            <pre class="code-block font-mono mb-6">
+            <section id="keyboard-mouse" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">7. Keyboard & Mouse Actions</h2>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Keyboard Actions (Send Special Keys)</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 from selenium.webdriver.common.keys import Keys
 
 driver.find_element(By.ID, "search").send_keys("Selenium" + Keys.ENTER)
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Mouse Actions (Hover, Drag & Drop, Right-Click)</h3>
-            <p class="text-slate-700 mb-2">The `ActionChains` class allows you to perform complex mouse interactions.</p>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Mouse Actions (Hover, Drag & Drop, Right-Click)</h3>
+                <p class="text-slate-700 mb-2">The `ActionChains` class allows you to perform complex mouse interactions.</p>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 from selenium.webdriver.common.action_chains import ActionChains
 
 element = driver.find_element(By.ID, "menu") 
@@ -348,36 +487,47 @@ action.move_to_element(element).click().perform()   # Hover & Click
 action.context_click(element).perform()            # Right-Click 
 action.drag_and_drop(source, target).perform()     # Drag & Drop
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="frames-windows" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">8. Handling Frames & Windows</h2>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Switch to Frame</h3>
-            <p class="text-slate-700 mb-2">Web pages can contain iframes. You need to switch to the frame to interact with elements inside it.</p>
-            <pre class="code-block font-mono mb-6">
+            <section id="frames-windows" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">8. Handling Frames & Windows</h2>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Switch to Frame</h3>
+                <p class="text-slate-700 mb-2">Web pages can contain iframes. You need to switch to the frame to interact with elements inside it.</p>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver.switch_to.frame("frame-name")   # By name, ID, or index
 driver.switch_to.default_content()     # Switch back to main page
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Switch to New Window/Tab</h3>
-            <p class="text-slate-700 mb-2">When a new window or tab opens, you can switch the driver's focus to it.</p>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Switch to New Window/Tab</h3>
+                <p class="text-slate-700 mb-2">When a new window or tab opens, you can switch the driver's focus to it.</p>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver.find_element(By.LINK_TEXT, "Open New Tab").click() 
 driver.switch_to.window(driver.window_handles[1])   # Switch to new tab 
 driver.close()   # Close current tab 
 driver.switch_to.window(driver.window_handles[0])   # Switch back
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="screenshots-cookies" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">9. Screenshots & Cookies</h2>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Take Screenshot</h3>
-            <p class="text-slate-700 mb-2">You can capture screenshots of the current browser window.</p>
-            <pre class="code-block font-mono mb-6">
+            <section id="screenshots-cookies" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">9. Screenshots & Cookies</h2>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Take Screenshot</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver.save_screenshot("screenshot.png")
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Manage Cookies</h3>
-            <p class="text-slate-700 mb-2">Selenium allows you to add, get, and delete cookies.</p>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Manage Cookies</h3>
+                <p class="text-slate-700 mb-2">Selenium allows you to add, get, and delete cookies.</p>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 # Add cookie 
 driver.add_cookie({"name": "test", "value": "123"}) 
 
@@ -387,45 +537,110 @@ print(driver.get_cookies())
 # Delete cookies 
 driver.delete_all_cookies()
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="closing-browser" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">10. Closing Browser</h2>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Close Current Window</h3>
-            <pre class="code-block font-mono mb-6">
+            <section id="closing-browser" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">10. Closing Browser</h2>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Close Current Window</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver.close()       # Close current window 
 </pre>
-            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Quit Entire Browser Session</h3>
-            <pre class="code-block font-mono mb-6">
+                    <button class="copy-button">Copy</button>
+                </div>
+                <h3 class="text-2xl font-semibold mb-4 text-slate-700">Quit Entire Browser Session</h3>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver.quit()        # Quit entire browser session
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="navigation" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">11. Navigation</h2>
-            <p class="text-slate-700 mb-2">Selenium provides methods to navigate browser history and refresh the page.</p>
-            <pre class="code-block font-mono mb-6">
+            <section id="navigation" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">11. Navigation</h2>
+                <p class="text-slate-700 mb-2">Selenium provides methods to navigate browser history and refresh the page.</p>
+                <div class="code-block-container">
+                    <pre class="code-block font-mono">
 driver.get("https://example.com")
 driver.back()     # Go back
 driver.forward()  # Go forward
 driver.refresh()  # Refresh page
 </pre>
-        </section>
+                    <button class="copy-button">Copy</button>
+                </div>
+            </section>
 
-        <section id="final-notes" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">Final Notes</h2>
-            <ul class="list-disc list-inside space-y-2 text-slate-600">
-                <li>Always use `try-finally` to ensure the browser closes properly.</li>
-                <li>Prefer Explicit Waits over `time.sleep()` for better efficiency.</li>
-                <li>Use XPath/CSS Selectors for complex element locating.</li>
-            </ul>
-        </section>
+            <section id="final-notes" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">Final Notes</h2>
+                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                    <li>Always use `try-finally` to ensure the browser closes properly.</li>
+                    <li>Prefer Explicit Waits over `time.sleep()` for better efficiency.</li>
+                    <li>Use XPath/CSS Selectors for complex element locating.</li>
+                </ul>
+            </section>
+
         
-        <section id="example1" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+        <section id="examples" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
             <h2 class="text-3xl font-bold text-left mb-6 text-slate-800">Selenium Python Script Examples</h2>
+            <br>
+            <hr>
+            <br>
+            <h3 class="text-2xl font-semibold mb-4 text-slate-700">Example (1) : Demonstrate the usage of the below:</h3>
+            <ul class="list-disc list-inside space-y-2 text-slate-600">
+                <li>Importing Selenium webdriver module</li>
+                <li>Importing time module</li>
+                <li>Adding option to start Chrome browser</li>
+                <li>Initializing Chrome browser</li>
+                <li>get() - method/function</li>
+                <li>sleep() - method/function</li>
+                <li>quit() - method/function</li>
+                <li>title - property</li>
+            </ul> 
+            <br>
+            <div class="code-block-container">
+                <pre class="code-block font-mono mb-6">
+# First Selenium Program
+
+from selenium import webdriver  # Import the main Selenium webdriver module
+from selenium.webdriver.chrome.service import Service  # Import Service class to manage ChromeDriver service
+from selenium.webdriver.chrome.options import Options  # Import Options class to set Chrome browser options
+from webdriver_manager.chrome import ChromeDriverManager  # Import ChromeDriverManager to automatically manage ChromeDriver
+import time  # Import time module to use sleep for delays
+
+chrome_options = Options()  # Create an instance of Chrome Options
+chrome_options.add_argument("--start-maximized")  # Add option to start the Chrome browser maximized
+# chrome_options.add_argument("--headless")  # (Optional) Run Chrome in headless mode (without UI)
+
+# Initialize Chrome browser using ChromeDriverManager to auto-download driver and apply options
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
+                          options=chrome_options)
+
+# Open the specified URL in the Chrome browser
+driver.get("https://skillzam.com")
+
+# Get the title of the current web page and store it in a variable
+webTitle = driver.title
+print(webTitle)  # Print the page title to the console
+
+# Pause the execution for 2 seconds to allow the page to load or for visual confirmation
+time.sleep(2)
+
+# Close the browser window and end the session
+driver.quit()
+
+</pre>
+                <button class="copy-button">Copy</button>
+            </div>
+            <br>
+            <hr>
+            <br>
             <h3 class="text-2xl font-semibold mb-4 text-slate-700">Example (1) : Usage of "By" &amp; "Keys"</h3>
             <p class="text-slate-700 mb-2">text</p>
-            <pre class="code-block font-mono mb-6">
+            <div class="code-block-container">
+                <pre class="code-block font-mono mb-6">
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -458,9 +673,17 @@ print(driver.current_url)
 # Close the browser window
 driver.close()
 </pre>
-        </section>
+                <button class="copy-button">Copy</button>
+            </div>
+            <br>
+            <hr>
+            <br>
 
-    </main>
+        </section>
+         
+
+        </main>
+    </div>
 
     <footer class="bg-blue-700 text-white text-center py-6">
         <p>&copy; 2025 Selenium Python Tutorials. All rights reserved.</p>
@@ -470,11 +693,13 @@ driver.close()
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const codeMirrorInstances = [];
+
             // Initialize CodeMirror for all pre.code-block elements
             document.querySelectorAll('pre.code-block').forEach(pre => {
                 const code = pre.textContent.trim();
                 pre.innerHTML = ''; // Clear original content
-                CodeMirror(pre, {
+                const editor = CodeMirror(pre, {
                     value: code,
                     mode: 'python',
                     theme: 'dracula', // Use dracula theme for dark mode compatibility
@@ -482,6 +707,39 @@ driver.close()
                     readOnly: true,
                     viewportMargin: Infinity // Ensure all lines are rendered
                 });
+                codeMirrorInstances.push(editor); // Store the instance
+
+                // Add copy button functionality
+                const container = pre.closest('.code-block-container');
+                if (container) {
+                    const copyButton = container.querySelector('.copy-button');
+                    if (copyButton) {
+                        copyButton.addEventListener('click', () => {
+                            const textToCopy = editor.getValue(); // Get content from CodeMirror instance
+                            
+                            // Use document.execCommand('copy') for clipboard operations in iframes
+                            const textarea = document.createElement('textarea');
+                            textarea.value = textToCopy;
+                            document.body.appendChild(textarea);
+                            textarea.select();
+                            try {
+                                document.execCommand('copy');
+                                copyButton.textContent = 'Copied!';
+                                setTimeout(() => {
+                                    copyButton.textContent = 'Copy';
+                                }, 2000);
+                            } catch (err) {
+                                console.error('Failed to copy text: ', err);
+                                copyButton.textContent = 'Error!';
+                                setTimeout(() => {
+                                    copyButton.textContent = 'Copy';
+                                }, 2000);
+                            } finally {
+                                document.body.removeChild(textarea);
+                            }
+                        });
+                    }
+                }
             });
 
             // Theme toggle logic
@@ -508,6 +766,60 @@ driver.close()
                     localStorage.setItem('theme', 'dark');
                     themeToggle.innerHTML = '<span class="text-xl">🌙</span>'; // Switch to moon
                 }
+            });
+
+            // Sidebar toggle logic for mobile
+            const hamburgerMenu = document.getElementById('hamburger-menu');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarClose = document.getElementById('sidebar-close');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarLinks = document.querySelectorAll('#sidebar .sidebar-link');
+
+            const toggleSidebar = () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebar.classList.toggle('sidebar-mobile-visible');
+                sidebarOverlay.classList.toggle('active');
+            };
+
+            hamburgerMenu.addEventListener('click', toggleSidebar);
+            sidebarClose.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', toggleSidebar); // Close sidebar when clicking overlay
+
+            // Close sidebar when a link is clicked (for smooth navigation on mobile)
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) { // Only close on mobile
+                        toggleSidebar();
+                    }
+                });
+            });
+
+            // Sidebar active link highlighting
+            const sections = document.querySelectorAll('main section');
+            const navLinks = document.querySelectorAll('.sidebar-link');
+
+            const observerOptions = {
+                root: null, // viewport
+                rootMargin: '0px',
+                threshold: 0.3 // Adjust this value as needed
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        const currentNavLink = document.querySelector(`.sidebar-link[href="#${entry.target.id}"]`);
+                        if (currentNavLink) {
+                            currentNavLink.classList.add('active');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
             });
         });
     </script>
