@@ -31,7 +31,7 @@ sheet.insert_cols(2)
 
 # Delete 2 rows starting from row 7
 # This removes rows 7 and 8 (if they existed), shifting up remaining rows
-sheet.delete_rows(7, 2)
+sheet.delete_rows(4, 2)
 
 # Delete column at position 3 (i.e., column C)
 # Column C and all to the right will be removed

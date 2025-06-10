@@ -60,7 +60,7 @@ line_chart.add_data(data)
 line_chart.set_categories(categories)
 
 # Insert the line chart into the worksheet at cell D15
-sheet.add_chart(line_chart, "D15")
+sheet.add_chart(line_chart, "N1")
 
 # Save the workbook to a file named "insertCharts.xlsx"
 wb.save("insertCharts.xlsx")

@@ -12,7 +12,8 @@ def sheet_to_dict(sheet):
     
     headers = [cell.value if cell.value is not None else f"col_{i}" 
                for i, cell in enumerate(sheet[1])]
-    
+    print("Headers", len(headers))
+
     # Iterate through data rows
     for row in sheet.iter_rows(min_row=2, values_only=True):
         row_data = {}
@@ -27,5 +28,8 @@ wb = load_workbook("test_data.xlsx")
 sheet = wb.active
 
 data_dict = sheet_to_dict(sheet)
+
+# print("data_dict", data_dict)
+
 for row in data_dict:
     print(row)

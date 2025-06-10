@@ -3,6 +3,87 @@
 # Fills in the form at: https://demoqa.com/automation-practice-form
 # Takes a screenshot for each test case
 # Updates the Excel sheet with "Pass" or "Fail" status
+# +------------------------------+
+# |            Start             |
+# +------------------------------+
+#               |
+#               v
+# +------------------------------+
+# | Initialize WebDriver & Excel |
+# +------------------------------+
+#               |
+#               v
+# +------------------------------+
+# | Create 'screenshots' folder  |
+# +------------------------------+
+#               |
+#               v
+# +------------------------------+
+# | Open URL: demoqa.com/form    |
+# +------------------------------+
+#               |
+#               v
+# +--------------------------------------+
+# |   For each row in Excel (Test Case)  |
+# +--------------------------------------+
+#               |
+#               v
+# +--------------------------------------+
+# |    Extract test data from the row    |
+# +--------------------------------------+
+#               |
+#               v
+# +--------------------------------+
+# | Convert date format if needed  |
+# +--------------------------------+
+#               |
+#               v
+# +------------------------------+
+# | Build absolute image path    |
+# +------------------------------+
+#             |
+#             v
+# +------------------------------+
+# | Call fill_practice_form()    |
+# +------------------------------+
+#             |
+#             v
+# +------------------------------+
+# | Was form filled successfully?|
+# +----------+-------------------+
+#            |Yes              |No
+#            v                 v
+# +---------------------+   +--------------------+
+# | Set result = "Pass" |   | Set result = "Fail"|
+# +---------------------+   +--------------------+
+#            \                 /
+#             v               v
+#       +----------------------------+
+#       | Take screenshot (by TC ID)|
+#       +----------------------------+
+#             |
+#             v
+# +----------------------------------+
+# | Update result in Excel ("Pass/Fail") |
+# +----------------------------------+
+#             |
+#             v
+# +----------------------------+
+# | Close modal & reload form |
+# +----------------------------+
+#             |
+#             v
+#      [Loop until all rows done]
+#             |
+#             v
+# +----------------------------+
+# | Save Excel workbook       |
+# +----------------------------+
+#             |
+#             v
+# +----------------------------+
+# | Quit browser & End script |
+# +----------------------------+
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
